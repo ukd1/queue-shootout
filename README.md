@@ -1,6 +1,6 @@
 # PostgreSQL Job Queue Shootout
 
-**This repo is no longer maintained, for more current benchmarking code/data please see [bensheldon's fork](https://github.com/bensheldon/queue-shootout).**
+_This project was originally created by [Chris Hanks](https://github.com/chanks/queue-shootout)._
 
 Yee-haw! To run:
 
