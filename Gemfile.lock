@@ -5,6 +5,16 @@ GIT
     queue_classic (4.0.0.pre.alpha1)
       pg (>= 0.17, < 2.0)
 
+GIT
+  remote: https://github.com/vtt/skiplock.git
+  revision: 6648b15e8834e073b3f292adc83bb996a711394b
+  specs:
+    skiplock (1.0.1)
+      activejob (>= 5.2.0)
+      activerecord (>= 5.2.0)
+      concurrent-ruby (>= 1.0.2)
+      parse-cron (~> 0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -66,6 +76,7 @@ GEM
     minitest (5.14.2)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
+    parse-cron (0.1.4)
     pg (1.2.3)
     pry (0.13.1)
       coderay (~> 1.1)
@@ -106,6 +117,7 @@ DEPENDENCIES
   queue_classic!
   rake
   redis (~> 3.0.0)
+  skiplock!
 
 BUNDLED WITH
    2.1.4
