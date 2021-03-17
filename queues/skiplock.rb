@@ -15,13 +15,14 @@ CREATE TABLE skiplock.jobs(
   executions integer,
   exception_executions jsonb,
   data jsonb,
+  running boolean default 'f' not null,
   expired_at timestamp without time zone,
   finished_at timestamp without time zone,
   scheduled_at timestamp without time zone,
   created_at timestamp(6) without time zone DEFAULT NOW() NOT NULL,
   updated_at timestamp(6) without time zone DEFAULT NOW() NOT NULL
 );
-CREATE INDEX jobs_index ON skiplock.jobs(scheduled_at ASC NULLS FIRST, priority ASC NULLS LAST, created_at ASC) WHERE expired_at IS NULL AND finished_at IS NULL;
+CREATE INDEX jobs_index ON skiplock.jobs(scheduled_at ASC NULLS FIRST, priority ASC NULLS LAST, created_at ASC) WHERE running = 'f' AND expired_at IS NULL AND finished_at IS NULL;
 INSERT INTO skiplock.jobs (job_class) SELECT 'SkiplockJob' FROM generate_Series(1,#{JOB_COUNT}) AS i;
 SQL
 
