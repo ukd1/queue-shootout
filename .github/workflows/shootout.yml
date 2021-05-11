@@ -1,0 +1,81 @@
+name: Shootout
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      quiet:
+        description: 'Quiet'
+        required: true
+        default: false
+      iterations:
+        description: 'Iterations'
+        required: true
+        default: 5
+      test_period:
+        description: 'Test Period'
+        required: false
+        default: 0.2
+      warmup_period:
+        description: 'Warmup Period'
+        required: false
+        default: 0.2
+      job_count:
+        description: 'Job Count'
+        required: false
+        default: 1000
+      synchronous_commit:
+        description: 'Synchronous Commit'
+        required: false
+        default: 'on'
+
+jobs:
+  shootout:
+    name: Shootout
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PGHOST: localhost
+      PGUSER: shootout
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
+      # Shootout ENV
+      QUIET: ${{ github.events.input.quiet || false }}
+      ITERATIONS: ${{ github.events.input.iterations || 5 }}
+      TEST_PERIOD: ${{ github.events.input.test_period || 0.2 }}
+      WARMUP_PERIOD: ${{ github.events.input.warmup_period || 0.2 }}
+      JOB_COUNT: ${{ github.events.input.job_count || 1000 }}
+      SYNCHRONOUS_COMMIT: ${{ github.events.input.synchronous_commit || 'on' }}
+    services:
+      postgres:
+        image: postgres:latest
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: shootout
+          POSTGRES_DB: shootout
+          POSTGRES_PASSWORD: ""
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:latest
+        ports: ["6379:6379"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+#      - name: Bundle update to the latest
+#        run: bundle config unset deployment && bundle update
+
+      # Test
+      - name: Run shootout
+        run: bundle exec rake
+        env:
+          DATABASE_URL: postgres://shootout@localhost:${{ job.services.postgres.ports[5432] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
