@@ -5,6 +5,7 @@ gem 'delayed_job_active_record'
 gem 'good_job'
 gem 'queue_classic', github: 'QueueClassic/queue_classic'
 gem 'que'
+gem 'skiplock', github: 'vtt/skiplock'
 
 # Use Redis to track job rates and synchronize workers.
 gem 'redis', '~> 3.0.0'
