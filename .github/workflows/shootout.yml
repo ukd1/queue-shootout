@@ -39,11 +39,11 @@ jobs:
       BUNDLE_RETRY: 3
       BUNDLE_PATH: vendor/bundle
       # Shootout ENV
-      ITERATIONS: ${{ github.events.input.iterations || 5 }}
-      TEST_PERIOD: ${{ github.events.input.test_period || 0.2 }}
-      WARMUP_PERIOD: ${{ github.events.input.warmup_period || 0.2 }}
-      JOB_COUNT: ${{ github.events.input.job_count || 1000 }}
-      SYNCHRONOUS_COMMIT: ${{ github.events.input.synchronous_commit || 'on' }}
+      ITERATIONS: ${{ github.event.inputs.iterations || 5 }}
+      TEST_PERIOD: ${{ github.event.inputs.test_period || 0.2 }}
+      WARMUP_PERIOD: ${{ github.event.inputs.warmup_period || 0.2 }}
+      JOB_COUNT: ${{ github.event.inputs.job_count || 1000 }}
+      SYNCHRONOUS_COMMIT: ${{ github.event.inputs.synchronous_commit || 'on' }}
     services:
       postgres:
         image: postgres:latest
