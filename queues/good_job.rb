@@ -38,6 +38,11 @@ GoodJob::Job.primary_key = :id
 QUEUES[:good_job] = {
   :setup => -> {
     ActiveRecord::Base.establish_connection(DATABASE_URL)
+    db_config = ActiveRecord::Base.configurations.configs_for.first.config
+    db_config['pool'] = 20
+
+    # Re-establish the connection with the new configuration
+    ActiveRecord::Base.establish_connection(db_config)
     ActiveRecord::Base.connection.raw_connection.async_exec "SET SESSION synchronous_commit = #{SYNCHRONOUS_COMMIT}"
   },
   :work => -> { GoodJob::Job.perform_with_advisory_lock }
