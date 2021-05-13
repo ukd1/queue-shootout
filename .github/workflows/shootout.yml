@@ -6,10 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      quiet:
-        description: 'Quiet'
-        required: true
-        default: false
       iterations:
         description: 'Iterations'
         required: true
@@ -43,7 +39,6 @@ jobs:
       BUNDLE_RETRY: 3
       BUNDLE_PATH: vendor/bundle
       # Shootout ENV
-      QUIET: ${{ github.events.input.quiet || false }}
       ITERATIONS: ${{ github.events.input.iterations || 5 }}
       TEST_PERIOD: ${{ github.events.input.test_period || 0.2 }}
       WARMUP_PERIOD: ${{ github.events.input.warmup_period || 0.2 }}
