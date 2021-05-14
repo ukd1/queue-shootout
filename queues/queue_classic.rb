@@ -15,7 +15,6 @@ module QCPerpetualJob
     def run(*args)
       QC.default_conn_adapter.execute "begin"
       QC.enqueue "QCPerpetualJob.run"
-      # Not sure how to delete this job in the same transaction?
       QC.default_conn_adapter.execute "commit"
     end
   end
