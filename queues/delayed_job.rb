@@ -30,7 +30,6 @@ module DJPerpetualJob
     def run(*args)
       ActiveRecord::Base.transaction do
         delay.run
-        # Again, not sure how to delete job in the same transaction.
       end
     end
   end
