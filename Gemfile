@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'rails', "~> 6.1"
+
 gem 'delayed_job'
 gem 'delayed_job_active_record'
 gem 'good_job'
