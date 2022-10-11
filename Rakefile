@@ -36,11 +36,15 @@ task :default do
   $redis = Redis.new :url    => ENV['REDIS_URL'],
                      :driver => :hiredis
 
-  %w(delayed_job good_job queue_classic que skiplock).each { |queue| require "./queues/#{queue}" }
+  [
+    "delayed_job",
+    "good_job",
+    "queue_classic",
+    "que",
+    "skiplock",
+  ].each { |queue| require "./queues/#{queue}" }
 
   $pg.async_exec "ANALYZE"
-
-
 
   # For large numbers of workers, we remove Ruby's GIL as the bottleneck by
   # forking off child processes to act as workers, while the parent process
