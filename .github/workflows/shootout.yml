@@ -1,5 +1,7 @@
 name: Shootout
-on:
+on:  
+  schedule:
+    - cron:  '0 0 1 * *'
   push:
     branches:
       - master
@@ -70,7 +72,35 @@ jobs:
 
       # Test
       - name: Run shootout
-        run: bundle exec rake
+        run: |
+          mkdir -p results/
+          
+          echo "# Shootout run #${GITHUB_RUN_NUMBER}" > results/run_${GITHUB_RUN_NUMBER}.md
+
+          echo "## Results" >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "\`\`\`" >> results/run_${GITHUB_RUN_NUMBER}.md
+          bundle exec rake >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "\`\`\`" >> results/run_${GITHUB_RUN_NUMBER}.md
+
+
+          echo "## Env & Run details" >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "Env vars were: ITERATIONS = \`${ITERATIONS}\`, TEST_PERIOD = \`${TEST_PERIOD}\`, WARMUP_PERIOD = \`${WARMUP_PERIOD}\`, JOB_COUNT = \`${JOB_COUNT}\`, SYNCHRONOUS_COMMIT = \`${SYNCHRONOUS_COMMIT}\`" >> results/run_${GITHUB_RUN_NUMBER}.md
+
+          echo "\n" >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "Postgres version: \`$(psql --version)\`" >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "Ruby version: \`$(ruby -v)\`" >> results/run_${GITHUB_RUN_NUMBER}.md
+
+          echo "Gem versions:" >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "\`\`\`" >> results/run_${GITHUB_RUN_NUMBER}.md
+          bundle >> results/run_${GITHUB_RUN_NUMBER}.md
+          echo "\`\`\`" >> results/run_${GITHUB_RUN_NUMBER}.md
         env:
           DATABASE_URL: postgres://shootout@localhost:${{ job.services.postgres.ports[5432] }}
           REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
+      - name: Commit, and push shootout results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add results/*.md
+          git commit -m "Updated data in run ${GITHUB_RUN_NUMBER}"
+          git push
